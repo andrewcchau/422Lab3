@@ -44,8 +44,21 @@ public class Main {
 		//read in initial command/words
 		words = parse(kb);
 
-		if(!words.get(0).equals("QUIT") && words.size() == 2){
-			//read words and output ladder
+		//read in initial command/words
+		words = parse(kb);
+		
+		//if /quit or isn't 2 words, continue. Otherwise quit
+		while(!words.isEmpty() && !words.get(0).equals("QUIT") && words.size() == 2){
+
+			ArrayList<String> end2 = getWordLadderBFS(words.get(0),words.get(1));
+			System.out.println(end2);
+
+			//since we edit the dictionary in some of the methods
+			initialize();
+
+			//get more commands/words
+			words.clear();
+			words = parse(kb);
 		}
 	}
 	
