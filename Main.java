@@ -1,6 +1,5 @@
 /* WORD LADDER Main.java
  * EE422C Project 3 submission by
- * Replace <...> with your actual data.
  * Andrew Chau
  * ac57662
  * 16460
@@ -107,8 +106,12 @@ public class Main {
 	 * @param ladder the ladder of words start to end
 	 */
 	public static void printLadder(ArrayList<String> ladder) {
-		for(int i = 0; i < ladder.size(); i++){
-			System.out.println(ladder.get(i));
+		if(ladder == null){
+			System.out.println("no word ladder can be found between " + words.get(0)+ " and " + words.get(1) + ".");
+		}else{
+			for(int i = 0; i < ladder.size(); i++){
+				System.out.println(ladder.get(i));
+			}
 		}
 	}
 
