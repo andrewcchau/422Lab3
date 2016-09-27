@@ -41,9 +41,9 @@ public class Main {
 		}
 		initialize();
 		
-		// TODO methods to read in words, output ladder
-		
+		//read in initial command/words
 		words = parse(kb);
+
 		if(!words.get(0).equals("QUIT") && words.size() == 2){
 			//read words and output ladder
 		}
@@ -98,14 +98,46 @@ public class Main {
 		return null; // replace this line later with real return
 	}
 	
+ 	/**
+	 * BFS through dictionary
+	 * @param start beginning word
+	 * @param end end word
+	 * @return ladder from start to end if it exists, otherwise null
+	 */
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
+		ArrayList<Node> connections = new ArrayList<Node>();
+		dict.remove(start); //so it won't loop back
+		link.add(start);
+		Node c;
 		
-		// TODO some code
-		Set<String> dict = makeDictionary();
-		// TODO more code
+		//creates the queue
+		createConnections(new Node(start), connections);
 		
-		return null; // replace this line later with real return
-	}
+		if(connections.isEmpty()){
+			return null;
+		}
+		
+		//parse through the connections and add as needed
+		for(int index = 0; index < connections.size(); index++){
+			c = connections.get(index);
+			
+			if(!c.getWord().equals(end)){ //current != end word
+				createConnections(c, connections);
+			}else if(c.getWord().equals(end)){
+				createLinksBFS(c);
+				break;
+			}else{
+				return null;
+			}
+		}
+		
+		if(!link.get(0).equals(start) || !link.get(link.size() - 1).equals(end)){
+			link.clear();
+			return null;
+		}else{
+			return link;
+		}
+    }
     
 	public static Set<String>  makeDictionary () {
 		Set<String> words = new HashSet<String>();
@@ -185,6 +217,10 @@ public class Main {
 		}
 	}
 	
+	/**
+	 * Creates a link based on the ending node as a result of BFS
+	 * @param end end node
+	 */
 	private static void createLinksBFS(Node end){
 		Stack<Node> rev = new Stack<Node>();
 		
