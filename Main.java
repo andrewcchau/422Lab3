@@ -42,6 +42,11 @@ public class Main {
 		initialize();
 		
 		// TODO methods to read in words, output ladder
+		
+		words = parse(kb);
+		if(!words.get(0).equals("QUIT") && words.size() == 2){
+			//read words and output ladder
+		}
 	}
 	
 	public static void initialize() {
@@ -61,8 +66,25 @@ public class Main {
 	 * If command is /quit, return empty ArrayList. 
 	 */
 	public static ArrayList<String> parse(Scanner keyboard) {
-		// TO DO
-		return null;
+		String in = keyboard.nextLine();
+		String[] words;
+		ArrayList<String> word = new ArrayList<String>();
+		int index = 0;
+		
+		if(in.trim().equals("/quit")){
+			word.add("QUIT");
+			return word;
+		}else{
+			words = in.trim().split(" ");
+			while(index < words.length){
+				words[index] = words[index].trim();
+				if(!words[index].equals("") && !words[index].equals(" ")){
+					word.add(words[index].toUpperCase());
+				}
+				index++;
+			}
+		}
+		return word;
 	}
 	
 	public static ArrayList<String> getWordLadderDFS(String start, String end) {
