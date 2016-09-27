@@ -27,7 +27,6 @@ public class Main {
 	private static ArrayList<String> temp; //multipurpose arrList
 
 	public static void main(String[] args) throws Exception {
-		
 		Scanner kb;	// input Scanner for commands
 		PrintStream ps;	// output file
 		// If arguments are specified, read/write from/to files instead of Std IO.
@@ -43,17 +42,15 @@ public class Main {
 		
 		//read in initial command/words
 		words = parse(kb);
-
-		//read in initial command/words
-		words = parse(kb);
 		
 		//if /quit or isn't 2 words, continue. Otherwise quit
 		while(!words.isEmpty() && !words.get(0).equals("QUIT") && words.size() == 2){
-
-			ArrayList<String> end = getWordLadderBFS(words.get(0),words.get(1));
+			ArrayList<String> end = getWordLadderDFS(words.get(0), words.get(1));
 			printLadder(end);
+			initialize();
 
-			//since we edit the dictionary in some of the methods
+			ArrayList<String> end2 = getWordLadderBFS(words.get(0),words.get(1));
+			printLadder(end2);
 			initialize();
 
 			//get more commands/words
@@ -84,6 +81,7 @@ public class Main {
 		ArrayList<String> word = new ArrayList<String>();
 		int index = 0;
 		
+		//quit command
 		if(in.trim().equals("/quit")){
 			word.add("QUIT");
 			return word;
@@ -100,6 +98,12 @@ public class Main {
 		return word;
 	}
 	
+	/**
+	 * DFS through dictionary
+	 * @param start beginning word
+	 * @param end end word
+	 * @return ladder from start to end if it exists, otherwise null
+	 */
 	public static ArrayList<String> getWordLadderDFS(String start, String end) {
 		
 		// Returned list should be ordered start to end.  Include start and end.
@@ -152,10 +156,9 @@ public class Main {
 			dead.add(start);
 			visited.remove(start);
 			return null;
+		}catch (StackOverflowError e){
+			return getWordLadderDFS(end, start);
 		}
-		// TODO more code
-		
-		return null; // replace this line later with real return
 	}
 	
  	/**
@@ -199,6 +202,10 @@ public class Main {
 		}
     }
     
+    /**
+     * Creates the dictionary from a given file
+     * @return dictionary as a set of strings
+     */
 	public static Set<String>  makeDictionary () {
 		Set<String> words = new HashSet<String>();
 		Scanner infile = null;
