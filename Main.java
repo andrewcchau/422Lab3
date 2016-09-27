@@ -132,6 +132,26 @@ public class Main {
 			}else if(dead.contains(start)){ //current word is a dead end
 				return null;
 			}
+			else if(similar(start, end)){ //current word is similar to goal word
+				visited.add(start);
+				link.add(start);
+				return getWordLadderDFS(end, end);
+			}else{
+				//search words similar to current word for a link
+				for(int ind = 0; ind < sim.size(); ind++){
+					visited.add(start);
+					temp = getWordLadderDFS(sim.get(ind), end);
+					if(temp != null){
+						temp.add(0, start);
+						return temp;
+					}
+				}
+			}
+			
+			//current word's relations have dead end
+			dead.add(start);
+			visited.remove(start);
+			return null;
 		}
 		// TODO more code
 		
