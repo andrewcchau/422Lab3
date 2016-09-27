@@ -3,11 +3,11 @@
  * Andrew Chau
  * ac57662
  * 16460
- * Pratyush Hebera
- * pb22426
+ * Pratyush Behera
+ * <Student2 EID>
  * 16460
  * Slip days used: <0>
- * Git URL: github.com/andrewcchau/422Lab3
+ * Git URL: https://github.com/andrewcchau/422Lab3
  * Fall 2016
  */
 
@@ -19,14 +19,15 @@ import java.io.*;
 public class Main {
 	
 	// static variables and constants only here.
-	private static ArrayList<String> words; //holds the words from user input
-	private static Set<String> dict; //dictionary
-	private static ArrayList<String> link; //the ladder between start and end
-	private static Set<String> visited; //visited words
-	private static Set<String> dead; //dead ends
-	private static ArrayList<String> temp; //multipurpose arrList
-
+	private static ArrayList<String> words;
+	private static Set<String> dict;
+	private static ArrayList<String> link;
+	private static Set<String> visited;
+	private static Set<String> dead;
+	private static ArrayList<String> temp;
+	
 	public static void main(String[] args) throws Exception {
+		
 		Scanner kb;	// input Scanner for commands
 		PrintStream ps;	// output file
 		// If arguments are specified, read/write from/to files instead of Std IO.
@@ -45,10 +46,10 @@ public class Main {
 		
 		//if /quit or isn't 2 words, continue. Otherwise quit
 		while(!words.isEmpty() && !words.get(0).equals("QUIT") && words.size() == 2){
-			ArrayList<String> end = getWordLadderDFS(words.get(0), words.get(1));
+/*			ArrayList<String> end = getWordLadderDFS(words.get(0), words.get(1));
 			printLadder(end);
 			initialize();
-
+*/
 			ArrayList<String> end2 = getWordLadderBFS(words.get(0),words.get(1));
 			printLadder(end2);
 			initialize();
@@ -63,7 +64,7 @@ public class Main {
 		// initialize your static variables or constants here.
 		// We will call this method before running our JUNIT tests.  So call it 
 		// only once at the start of main.
-
+		
 		dict = makeDictionary();
 		link = new ArrayList<String>();
 		visited = new HashSet<String>();
@@ -81,7 +82,6 @@ public class Main {
 		ArrayList<String> word = new ArrayList<String>();
 		int index = 0;
 		
-		//quit command
 		if(in.trim().equals("/quit")){
 			word.add("QUIT");
 			return word;
@@ -104,12 +104,7 @@ public class Main {
 	 * @param end end word
 	 * @return ladder from start to end if it exists, otherwise null
 	 */
-	public static ArrayList<String> getWordLadderDFS(String start, String end) {
-		
-		// Returned list should be ordered start to end.  Include start and end.
-		// Return empty list if no ladder.
-		// TODO some code
-		Set<String> dict = makeDictionary();
+	private static ArrayList<String> getWordLadderDFS(String start, String end){
 		ArrayList<String> sim = new ArrayList<String>();
 		String n;
 		Iterator<String> i = dict.iterator();
@@ -135,8 +130,7 @@ public class Main {
 				return link;
 			}else if(dead.contains(start)){ //current word is a dead end
 				return null;
-			}
-			else if(similar(start, end)){ //current word is similar to goal word
+			}else if(similar(start, end)){ //current word is similar to goal word
 				visited.add(start);
 				link.add(start);
 				return getWordLadderDFS(end, end);
@@ -156,12 +150,12 @@ public class Main {
 			dead.add(start);
 			visited.remove(start);
 			return null;
-		}catch (StackOverflowError e){
+		} catch (StackOverflowError e){
 			return getWordLadderDFS(end, start);
 		}
 	}
 	
- 	/**
+	/**
 	 * BFS through dictionary
 	 * @param start beginning word
 	 * @param end end word
@@ -210,7 +204,7 @@ public class Main {
 		Set<String> words = new HashSet<String>();
 		Scanner infile = null;
 		try {
-			infile = new Scanner (new File("five_letter_words.txt"));
+			infile = new Scanner (new File("five_letter_words.txt")); //five_letter_words.txt original
 		} catch (FileNotFoundException e) {
 			System.out.println("Dictionary File not Found!");
 			e.printStackTrace();
@@ -219,22 +213,26 @@ public class Main {
 		while (infile.hasNext()) {
 			words.add(infile.next().toUpperCase());
 		}
+		infile.close();
 		return words;
+
 	}
 	
 	/**
-	 * Prints the ladder of words
+	 * Prints the ladder of words as lower case words
 	 * @param ladder the ladder of words start to end
 	 */
 	public static void printLadder(ArrayList<String> ladder) {
 		if(ladder == null){
 			System.out.println("no word ladder can be found between " + words.get(0)+ " and " + words.get(1) + ".");
 		}else{
+			System.out.println("a " + (ladder.size()-2) + "-rung word ladder exists between " + ladder.get(0).toLowerCase() + " and " + ladder.get(ladder.size() - 1).toLowerCase() + ".");
 			for(int i = 0; i < ladder.size(); i++){
-				System.out.println(ladder.get(i));
+				System.out.println(ladder.get(i).toLowerCase());
 			}
 		}
 	}
+
 
 	/**
 	 * Determines whether two given words have a 1 letter difference
@@ -302,4 +300,35 @@ public class Main {
 			link.add(rev.pop().getWord());
 		}
 	}
+	
+	/**
+	 * Used to make sure that the given ladder doesn't have loops
+	 * @param l the created ladder
+	 * @return true is ladder doesn't have loops, false otherwise
+	 */
+	private static boolean validLadder(ArrayList<String> l){
+		if(l == null){
+			return false;
+		}
+
+		Iterator<String> i;
+		String n; int ctr;
+		
+		for(int index = 0; index < l.size(); index++){
+			i = l.iterator();
+			ctr = 0;
+			while(i.hasNext()){
+				n = i.next();
+				if(l.get(index).equals(n)){
+					ctr++;
+				}
+				if(ctr > 1){
+					return false;
+				}
+			}
+		}
+		
+		return true;
+	}
+	
 }
