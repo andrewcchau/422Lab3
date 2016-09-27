@@ -106,6 +106,33 @@ public class Main {
 		// Return empty list if no ladder.
 		// TODO some code
 		Set<String> dict = makeDictionary();
+		ArrayList<String> sim = new ArrayList<String>();
+		String n;
+		Iterator<String> i = dict.iterator();
+	
+		try{
+			//get similar words
+			while(i.hasNext()){
+				n = i.next();
+				if(similar(start, n) && !visited.contains(n)){
+					sim.add(n);
+				}
+			}
+			
+			//add dead ends to dead
+			if(sim.isEmpty()){
+				dead.add(start);
+				dict.remove(start);
+			}
+			
+			//check current word
+			if(start.equals(end)){
+				link.add(start);
+				return link;
+			}else if(dead.contains(start)){ //current word is a dead end
+				return null;
+			}
+		}
 		// TODO more code
 		
 		return null; // replace this line later with real return
