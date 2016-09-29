@@ -25,6 +25,7 @@ public class Main {
 	private static Set<String> visited;
 	private static Set<String> dead;
 	private static ArrayList<String> temp;
+	private static double startTime, endTime;
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -45,15 +46,21 @@ public class Main {
 		words = parse(kb);
 		
 		//if /quit or isn't 2 words, continue. Otherwise quit
-		while(!words.isEmpty() && !words.get(0).equals("QUIT") && words.size() == 2){
-/*			ArrayList<String> end = getWordLadderDFS(words.get(0), words.get(1));
+		while(!words.isEmpty() && words.size() == 2){
+			startTime = System.nanoTime();
+			ArrayList<String> end = getWordLadderDFS(words.get(0), words.get(1));
+			endTime = System.nanoTime();
+			System.out.println("Time elapsed: " + (endTime - startTime) / 1000000000 + " seconds.");
 			printLadder(end);
 			initialize();
-*/
+/*	
+			startTime = System.nanoTime();
 			ArrayList<String> end2 = getWordLadderBFS(words.get(0),words.get(1));
+			endTime = System.nanoTime();
+			System.out.println("Time elapsed: " + (endTime - startTime) / 1000000000 + " seconds.");
 			printLadder(end2);
 			initialize();
-
+*/
 			//get more commands/words
 			words.clear();
 			words = parse(kb);
@@ -83,7 +90,7 @@ public class Main {
 		int index = 0;
 		
 		if(in.trim().equals("/quit")){
-			word.add("QUIT");
+			System.exit(0);
 			return word;
 		}else{
 			words = in.trim().split(" ");
@@ -99,31 +106,29 @@ public class Main {
 	}
 	
 	/**
+	 * DFS handler
+	 * @param start beginning of ladder
+	 * @param end destination of ladder
+	 * @return word ladder from start to end
+	 */
+	public static ArrayList<String> getWordLadderDFS(String start, String end){
+		//sometimes the quickest path
+		ArrayList<String> temp = getDFS(end, start);
+		return reverseARL(temp);
+	}
+	
+	/**
 	 * DFS through dictionary
 	 * @param start beginning word
 	 * @param end end word
 	 * @return ladder from start to end if it exists, otherwise null
 	 */
-	private static ArrayList<String> getWordLadderDFS(String start, String end){
+	private static ArrayList<String> getDFS(String start, String end){
 		ArrayList<String> sim = new ArrayList<String>();
 		String n;
 		Iterator<String> i = dict.iterator();
 	
-		try{
-			//get similar words
-			while(i.hasNext()){
-				n = i.next();
-				if(similar(start, n) && !visited.contains(n)){
-					sim.add(n);
-				}
-			}
-			
-			//add dead ends to dead
-			if(sim.isEmpty()){
-				dead.add(start);
-				dict.remove(start);
-			}
-			
+		try{		
 			//check current word
 			if(start.equals(end)){
 				link.add(start);
@@ -133,12 +138,27 @@ public class Main {
 			}else if(similar(start, end)){ //current word is similar to goal word
 				visited.add(start);
 				link.add(start);
-				return getWordLadderDFS(end, end);
+				return getDFS(end, end);
 			}else{
+				//get similar words
+				while(i.hasNext()){
+					n = i.next();
+					if(similar(start, n) && !visited.contains(n) && !dead.contains(n)){
+						sim.add(n);
+					}
+				}
+				
+				//add dead ends to dead
+				if(sim.isEmpty()){
+					dead.add(start);
+					dict.remove(start);
+					return null;
+				}
+				
 				//search words similar to current word for a link
 				for(int ind = 0; ind < sim.size(); ind++){
 					visited.add(start);
-					temp = getWordLadderDFS(sim.get(ind), end);
+					temp = getDFS(sim.get(ind), end);
 					if(temp != null){
 						temp.add(0, start);
 						return temp;
@@ -148,10 +168,10 @@ public class Main {
 			
 			//current word's relations have dead end
 			dead.add(start);
-			visited.remove(start);
+			dict.remove(start);
 			return null;
 		} catch (StackOverflowError e){
-			return getWordLadderDFS(end, start);
+			return getDFS(end, start);
 		}
 	}
 	
@@ -224,7 +244,7 @@ public class Main {
 	 */
 	public static void printLadder(ArrayList<String> ladder) {
 		if(ladder == null){
-			System.out.println("no word ladder can be found between " + words.get(0)+ " and " + words.get(1) + ".");
+			System.out.println("no word ladder can be found between " + words.get(0).toLowerCase()+ " and " + words.get(1).toLowerCase() + ".");
 		}else{
 			System.out.println("a " + (ladder.size()-2) + "-rung word ladder exists between " + ladder.get(0).toLowerCase() + " and " + ladder.get(ladder.size() - 1).toLowerCase() + ".");
 			for(int i = 0; i < ladder.size(); i++){
@@ -331,4 +351,12 @@ public class Main {
 		return true;
 	}
 	
+	private static ArrayList<String> reverseARL(ArrayList<String> arL){
+		if(arL == null){
+			return null;
+		}
+		ArrayList<String> temp = arL;
+		Collections.reverse(temp);
+		return temp;
+	}
 }
